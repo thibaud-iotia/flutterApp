@@ -62,7 +62,6 @@ class FirestoreService {
           setCurrentUser(user);
           if (user.password == password) {
             setUserId(user.id);
-            print(getUserId());
             return true;
           } else {
             return false;

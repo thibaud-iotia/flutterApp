@@ -41,18 +41,21 @@ class _LoginScreenState extends State<LoginScreen> {
         const SnackBar(content: Text('Processing Data')),
       );
       bool logged = await _firestoreService.signIn(_login, _password);
-      logged
-          ? Navigator.push(
+      if (context.mounted) {
+        if (logged) {
+          Navigator.pushReplacement(
               context,
               MaterialPageRoute(
                   builder: (context) => HomeScreen(
                         title: widget.title,
-                      )))
-          : print("Login failed");
-
-      await _firestoreService
-          .getActivities()
-          .then((value) => print(value.first.prix));
+                      )));
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Login or password incorrect')),
+          );
+        
+        }
+      }
     } else {
       // If the form is invalid, display a snackbar.
       ScaffoldMessenger.of(context).showSnackBar(

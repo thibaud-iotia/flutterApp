@@ -68,19 +68,41 @@ class _SubscribeScreenState extends State<SubscribeScreen> {
 
   void onSubscribePressed() async {
     if (_formKey.currentState!.validate()) {
-    if (currentUser.password == _confirmPassword) {
-      int id = await _firestoreService.getNextUserId();
-      if (id != -999) {
-        currentUser.id = id;
-        await _firestoreService.signUp(currentUser)
-            ? Navigator.pop(context)
-            : print("Subscribe failed");
+      if (currentUser.password == _confirmPassword) {
+        int id = await _firestoreService.getNextUserId();
+        if (id != -999) {
+          currentUser.id = id;
+          bool logged = await _firestoreService.signUp(currentUser);
+          if (context.mounted) {
+            if (logged) {
+              Navigator.pop(context);
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Subscribe failed, please try again later'),
+                ),
+              );
+            }
+          }
+        } else {
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text(
+                    'Error while getting the next user id, please try again later'),
+              ),
+            );
+          }
+        }
       } else {
-        print("Subscribe failed on getting next user id");
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Passwords do not match, please try again later'),
+            ),
+          );
+        }
       }
-    } else {
-      print("Password and Confirm Password are not the same");
-    }
     }
   }
 

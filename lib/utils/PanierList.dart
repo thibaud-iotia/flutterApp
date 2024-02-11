@@ -3,7 +3,7 @@ import 'package:squadgather/Models/Activity.dart';
 
 class PanierList extends StatefulWidget {
   final Function(int) deleteActivityFromCart;
-  PanierList({super.key, required this.panierList, required this.deleteActivityFromCart});
+  const PanierList({super.key, required this.panierList, required this.deleteActivityFromCart});
 
   final List<Activity> panierList;
   

@@ -5,7 +5,7 @@ class InputWidget extends StatefulWidget {
   final bool? readOnly;
   final String? currentValue;
   final TextInputType type;
-  InputWidget(
+  const InputWidget(
       {super.key,
       required this.labelText,
       required this.icon,
