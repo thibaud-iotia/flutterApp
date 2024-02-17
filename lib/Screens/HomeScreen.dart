@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:squadgather/Screens/ActivitesScreen.dart';
+import 'package:squadgather/Screens/AddActivityScreen.dart';
 import 'package:squadgather/Screens/ProfilScreen.dart';
 import 'package:squadgather/Services/FirestoreService.dart';
 import 'package:squadgather/utils/BottomNavBar.dart';
@@ -20,11 +21,22 @@ class _HomeScreenState extends State<HomeScreen> {
   final FirestoreService _firestoreService = FirestoreService();
 
   bool showOptions = false;
+  String optionName = "Terminer";
+  @override
+  void initState() {
+    super.initState();
+    handleNavigation(0);
+  }
 
-  void handleTerminer() {
-    _firestoreService.updateUser(_firestoreService.getCurrentUser());
-    //close the keyboard
-    FocusScope.of(context).unfocus();
+  void handleOptions() {
+    if (optionName == "Terminer"){
+      _firestoreService.updateUser(_firestoreService.getCurrentUser());
+      //close the keyboard
+      FocusScope.of(context).unfocus();
+      
+    }else {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => const AddActivityScreen(title: "SquadGather")));
+    }
   }
 
   void handleNavigation(int index) {
@@ -35,25 +47,29 @@ class _HomeScreenState extends State<HomeScreen> {
       case 0:
         setState(() {
           _currentScreen = const ActivitesScreen(title: "Activités");
-          showOptions = false;
+          showOptions = true;
+          optionName = "Ajouter";
         });
         break;
       case 1:
         setState(() {
           _currentScreen = const TabBarTool();
           showOptions = false;
+          optionName = "Terminer";
         });
         break;
       case 2:
         setState(() {
           _currentScreen = const ProfilScreen(title: "Mon profil");
           showOptions = true;
+          optionName = "Terminer";
         });
         break;
       default:
         setState(() {
           _currentScreen = const ActivitesScreen(title: "Activités");
           showOptions = false;
+          optionName = "Terminer";
         });
     }
   }
@@ -65,7 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
           title: showOptions ? Row(children: <Widget>[
             Expanded(child: Align(alignment: Alignment.center, child: Text(widget.title))),
-            ElevatedButton(onPressed: () => handleTerminer(), child: const Text("Terminer"))
+            ElevatedButton(onPressed: () => handleOptions(), child: Text(optionName))
           ]) : Text(widget.title),
         ),
         body: _currentScreen,

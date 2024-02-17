@@ -98,24 +98,23 @@ class FirestoreService {
     }
   }
 
-Future<int> getNextUserId() async{
-  int id = -999;
-  try {
-    // parcourir tous les documents de la collection users et récupérer le plus grand id User
-    var value = await _usersCollectionReference.get();
-    value.docs.forEach((element) {
-      User user = User.fromJson(element.data() as Map<String, dynamic>);
-      if (user.id > id) {
-        id = user.id;
-      }
-    });
-    id++;
-  } catch (e) {
-    print("getNextUserId: $e");
+  Future<int> getNextUserId() async {
+    int id = -999;
+    try {
+      // parcourir tous les documents de la collection users et récupérer le plus grand id User
+      var value = await _usersCollectionReference.get();
+      value.docs.forEach((element) {
+        User user = User.fromJson(element.data() as Map<String, dynamic>);
+        if (user.id > id) {
+          id = user.id;
+        }
+      });
+      id++;
+    } catch (e) {
+      print("getNextUserId: $e");
+    }
+    return id;
   }
-  return id;
-}
-
 
   Future<List<Activity>> getActivities() async {
     List<Activity> activities = [];
@@ -128,7 +127,6 @@ Future<int> getNextUserId() async{
         if (!getCategorie().contains(activity.categorie)) {
           setCategorie(activity.categorie);
         }
-          
       });
     } catch (e) {
       print("getActivities: $e");
@@ -165,9 +163,12 @@ Future<int> getNextUserId() async{
         });
         var activites = await getActivities();
         activites.forEach((activity) {
-          if (activityIdsList.contains(activity.id) && category != null && activity.categorie == category) {
+          if (activityIdsList.contains(activity.id) &&
+              category != null &&
+              activity.categorie == category) {
             activities.add(activity);
-          }else if (activityIdsList.contains(activity.id) && category == null){
+          } else if (activityIdsList.contains(activity.id) &&
+              category == null) {
             activities.add(activity);
           }
         });
@@ -206,6 +207,68 @@ Future<int> getNextUserId() async{
       return true;
     } catch (e) {
       print("updateUser: $e");
+      return false;
+    }
+  }
+
+  Future<bool> addActivity(Activity activity) async {
+    try {
+      await _activitiesCollectionReference.doc().set({
+        "id": activity.id,
+        "titre": activity.titre,
+        "lieu": activity.lieu,
+        "prix": activity.prix,
+        "image": activity.image,
+        "categorie": activity.categorie,
+        "nbParticipants": activity.nbParticipants
+      });
+      return true;
+    } catch (e) {
+      print("Add activity: $e");
+      return false;
+    }
+  }
+
+  Future<int> getNextActivityId() async {
+    int id = -999;
+    try {
+      // parcourir tous les documents de la collection users et récupérer le plus grand id User
+      var value = await _activitiesCollectionReference.get();
+      value.docs.forEach((element) {
+        Activity activity =
+            Activity.fromJson(element.data() as Map<String, dynamic>);
+        if (activity.id > id) {
+          id = activity.id;
+        }
+      });
+      id++;
+    } catch (e) {
+      print("getNextUserId: $e");
+    }
+    return id;
+  }
+
+  Future<bool> removeActivity(int activityId) async {
+    try {
+      var activities = await _activitiesCollectionReference.get();
+      // Parcourir les documents récupérés
+      for (var document in activities.docs) {
+        // Convertir chaque document en objet Activity
+        Activity current =
+            Activity.fromJson(document.data() as Map<String, dynamic>);
+        // Vérifier si l'ID correspond
+        if (activityId == current.id) {
+          // Supprimer le document correspondant
+          await _activitiesCollectionReference.doc(document.id).delete();
+          // Indiquer que la suppression a réussi
+          return true;
+        }
+      }
+      // Si aucun document ne correspond à l'ID donné, retourner false
+      return false;
+    } catch (e) {
+      // Gérer les erreurs éventuelles
+      print("removeActivity: $e");
       return false;
     }
   }

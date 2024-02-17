@@ -13,32 +13,47 @@ class ActivitesScreen extends StatefulWidget {
 }
 
 class _ActivitesScreenState extends State<ActivitesScreen> {
-
   final FirestoreService _firestoreService = FirestoreService();
 
   List<Activity> activitiesList = [];
 
-  void getActivities(){
+  void getActivities() {
     _firestoreService.getActivities().then((value) => {
-      setState(() {
-        activitiesList = value;
-      })
-    });
+          setState(() {
+            activitiesList = value;
+          })
+        });
   }
-  
+
   @override
   void initState() {
     super.initState();
     getActivities();
   }
 
+  void handleDeleteActivity(int activityId) async {
+    bool activityDeleted = await _firestoreService.removeActivity(activityId);
+    if (context.mounted) {
+      if (activityDeleted) {
+        getActivities();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("L'Activité a bien été supprimé !"),
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     //display a text in the center of the screen
-    return Column(
-      children: <Widget> [
-        Expanded(child: ActivitiesList(activitiesList: activitiesList)),
-      ]
-    );
+    return Column(children: <Widget>[
+      Expanded(
+          child: ActivitiesList(
+        activitiesList: activitiesList,
+        handleDeleteActivity: handleDeleteActivity,
+      )),
+    ]);
   }
 }

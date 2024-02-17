@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:squadgather/Models/Activity.dart';
 import 'package:squadgather/Screens/CurrentActivityScreen.dart';
+import 'package:squadgather/Services/FirestoreService.dart';
 
 class ActivitiesList extends StatefulWidget {
-  const ActivitiesList({super.key, required this.activitiesList});
+  final Function(int) handleDeleteActivity;
+  const ActivitiesList({super.key, required this.activitiesList, required this.handleDeleteActivity});
 
   final List<Activity> activitiesList;
 
@@ -12,10 +14,15 @@ class ActivitiesList extends StatefulWidget {
 }
 
 class _ActivitiesListState extends State<ActivitiesList> {
+  final FirestoreService _firestoreService = FirestoreService();
 
   void handleTapActivity(Activity activity) {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => CurrentActivityScreen(activity: activity)));
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => CurrentActivityScreen(activity: activity)));
   }
+
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
@@ -51,7 +58,7 @@ class _ActivitiesListState extends State<ActivitiesList> {
                   ),
                   IconButton(
                     icon: const Icon(Icons.delete),
-                    onPressed: () {},
+                    onPressed: () => widget.handleDeleteActivity(activity.id),
                   ),
                 ],
               )
@@ -62,4 +69,3 @@ class _ActivitiesListState extends State<ActivitiesList> {
     );
   }
 }
-
