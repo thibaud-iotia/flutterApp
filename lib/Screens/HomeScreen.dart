@@ -23,7 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
   bool showOptions = false;
   String optionName = "Terminer";
   @override
-  void initState() {
+  void initState(){
     super.initState();
     handleNavigation(0);
   }
@@ -46,14 +46,15 @@ class _HomeScreenState extends State<HomeScreen> {
     switch (index) {
       case 0:
         setState(() {
-          _currentScreen = const ActivitesScreen(title: "Activités");
+          //_currentScreen = const ActivitesScreen(title: "Activités");
+          _currentScreen = const TabBarTool(screenName: "activites");
           showOptions = true;
           optionName = "Ajouter";
         });
         break;
       case 1:
         setState(() {
-          _currentScreen = const TabBarTool();
+          _currentScreen = const TabBarTool(screenName: "panier");
           showOptions = false;
           optionName = "Terminer";
         });
@@ -67,7 +68,8 @@ class _HomeScreenState extends State<HomeScreen> {
         break;
       default:
         setState(() {
-          _currentScreen = const ActivitesScreen(title: "Activités");
+          //_currentScreen = const ActivitesScreen(title: "Activités");
+          _currentScreen = const TabBarTool(screenName: "activites");
           showOptions = false;
           optionName = "Terminer";
         });

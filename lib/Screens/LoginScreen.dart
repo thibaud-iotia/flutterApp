@@ -43,12 +43,15 @@ class _LoginScreenState extends State<LoginScreen> {
       bool logged = await _firestoreService.signIn(_login, _password);
       if (context.mounted) {
         if (logged) {
-          Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => HomeScreen(
-                        title: widget.title,
-                      )));
+          await _firestoreService.getCategories();
+          if (context.mounted) {
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => HomeScreen(
+                          title: widget.title,
+                        )));
+          }
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Login or password incorrect')),

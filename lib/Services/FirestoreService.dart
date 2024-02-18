@@ -116,16 +116,20 @@ class FirestoreService {
     return id;
   }
 
-  Future<List<Activity>> getActivities() async {
+  Future<List<Activity>> getActivities({String? categorie}) async {
     List<Activity> activities = [];
     try {
       var value = await _activitiesCollectionReference.get();
       value.docs.forEach((element) {
         Activity activity =
             Activity.fromJson(element.data() as Map<String, dynamic>);
-        activities.add(activity);
         if (!getCategorie().contains(activity.categorie)) {
           setCategorie(activity.categorie);
+        }
+        if (categorie != null && activity.categorie == categorie) {
+          activities.add(activity);
+        } else if (categorie == null || categorie == "") {
+          activities.add(activity);
         }
       });
     } catch (e) {
@@ -133,6 +137,20 @@ class FirestoreService {
     }
 
     return activities;
+  }
+  Future<void> getCategories() async {
+    try {
+      var value = await _activitiesCollectionReference.get();
+      value.docs.forEach((element) {
+        Activity activity =
+            Activity.fromJson(element.data() as Map<String, dynamic>);
+        if (!getCategorie().contains(activity.categorie)) {
+          setCategorie(activity.categorie);
+        }
+      });
+    } catch (e) {
+      print("getCategories: $e");
+    }
   }
 
   Future<void> addActivityToCart(int activityId) async {
@@ -162,6 +180,7 @@ class FirestoreService {
               .add(element); // ajout de l'id de l'activité dans la liste
         });
         var activites = await getActivities();
+        
         activites.forEach((activity) {
           if (activityIdsList.contains(activity.id) &&
               category != null &&
@@ -269,6 +288,37 @@ class FirestoreService {
     } catch (e) {
       // Gérer les erreurs éventuelles
       print("removeActivity: $e");
+      return false;
+    }
+  }
+
+  Future<bool> updateActivity(Activity activity) async {
+    try {
+      var activities = await _activitiesCollectionReference.get();
+      // Parcourir les documents récupérés
+      for (var document in activities.docs) {
+        // Convertir chaque document en objet Activity
+        Activity current =
+            Activity.fromJson(document.data() as Map<String, dynamic>);
+        // Vérifier si l'ID correspond
+        if (activity.id == current.id) {
+          // Mettre à jour le document correspondant
+          await _activitiesCollectionReference.doc(document.id).update({
+            "titre": activity.titre,
+            "lieu": activity.lieu,
+            "prix": activity.prix,
+            "image": activity.image,
+            "categorie": activity.categorie,
+            "nbParticipants": activity.nbParticipants
+          });
+          // Indiquer que la mise à jour a réussi
+          return true;
+        }
+      }
+      // Si aucun document ne correspond à l'ID donné, retourner false
+      return false;
+    } catch (e) {
+      print("updateActivity: $e");
       return false;
     }
   }

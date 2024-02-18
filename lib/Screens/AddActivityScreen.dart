@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:squadgather/Models/Activity.dart';
+import 'package:squadgather/Screens/HomeScreen.dart';
 import 'package:squadgather/Services/FirestoreService.dart';
 import 'package:squadgather/utils/InputWidget.dart';
 import 'package:image_input/image_input.dart';
@@ -63,7 +64,7 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
       bool activityAdded = await _firestoreService.addActivity(newActivity);
       if (context.mounted) {
         if (activityAdded) {
-          Navigator.pop(context);
+          Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeScreen(title: "SquadGather")));
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('${newActivity.titre} a bien été ajouté !'),

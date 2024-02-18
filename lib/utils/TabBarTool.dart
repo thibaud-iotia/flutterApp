@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:squadgather/Screens/ActivitesScreen.dart';
 import 'package:squadgather/Screens/PanierScreen.dart';
 import 'package:squadgather/Services/FirestoreService.dart';
 
 class TabBarTool extends StatefulWidget {
-  const TabBarTool({super.key});
+  const TabBarTool({super.key, required this.screenName});
+
+  final String screenName;
 
   @override
   State<TabBarTool> createState() => _TabBarToolState();
@@ -12,20 +15,8 @@ class TabBarTool extends StatefulWidget {
 class _TabBarToolState extends State<TabBarTool> {
   final FirestoreService _firestoreService = FirestoreService();
 
-  final List<Widget> _tabList = [];
-
   String title = "Toutes les catégories";
 
-  @override
-  void initState() {
-    super.initState();
-    setState(() {
-      _tabList.add(const PanierScreen(title: "Mon panier"));
-      _firestoreService.getCategorie().forEach((element) {
-        _tabList.add(PanierScreen(title: "Mon panier", category: element));
-      });
-    });
-  }
 
   void handleTabChange(int index) {
     setState(() {
@@ -35,10 +26,22 @@ class _TabBarToolState extends State<TabBarTool> {
 
   @override
   Widget build(BuildContext context) {
+    List<Widget> tabList = [];
+    if (widget.screenName == "panier") {
+      tabList.add(const PanierScreen(title: "Mon panier"));
+      _firestoreService.getCategorie().forEach((element) {
+        tabList.add(PanierScreen(title: "Mon panier", category: element));
+      });
+    } else {
+      tabList.add(const ActivitesScreen(title: "Activités"));
+      _firestoreService.getCategorie().forEach((element) {
+        tabList.add(ActivitesScreen(title: "Activités", category: element));
+      });
+    }
     return Theme(
       data: Theme.of(context), // Use the theme from the ancestor MaterialApp
       child: DefaultTabController(
-        length: _tabList.length,
+        length: tabList.length,
         child: Scaffold(
           appBar: AppBar(
             automaticallyImplyLeading: false,
@@ -54,7 +57,7 @@ class _TabBarToolState extends State<TabBarTool> {
             ),
           ),
           body: TabBarView(
-            children: _tabList,
+            children: tabList,
           ),
         ),
       ),

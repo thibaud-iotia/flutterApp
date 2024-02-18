@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:squadgather/Models/Activity.dart';
 import 'package:squadgather/Screens/CurrentActivityScreen.dart';
-import 'package:squadgather/Services/FirestoreService.dart';
 
 class ActivitiesList extends StatefulWidget {
   final Function(int) handleDeleteActivity;
@@ -14,13 +13,23 @@ class ActivitiesList extends StatefulWidget {
 }
 
 class _ActivitiesListState extends State<ActivitiesList> {
-  final FirestoreService _firestoreService = FirestoreService();
+  bool isEditing = false;
 
   void handleTapActivity(Activity activity) {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => CurrentActivityScreen(activity: activity)));
+            builder: (context) => CurrentActivityScreen(activity: activity, isEditing: false)));
+  }
+
+  void handleEditActivity(Activity currentActivity) {
+    setState(() {
+      isEditing = true;
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => CurrentActivityScreen(activity: currentActivity, isEditing: isEditing)));
+    });
   }
 
   @override
@@ -30,39 +39,60 @@ class _ActivitiesListState extends State<ActivitiesList> {
       itemBuilder: (context, index) {
         var activity = widget.activitiesList[index];
         return Card(
-          child: Row(
-            children: <Widget>[
-              Expanded(
-                child: ListTile(
-                  onTap: () => handleTapActivity(activity),
-                  title: Text(activity.titre),
-                  subtitle: Column(
-                    children: <Widget>[
-                      Text(activity.lieu),
-                      Text("${activity.prix}€"),
-                      // Afficher l'image à partir de l'URL
-                      Image.network(
-                        activity.image,
-                        height: 100,
-                        width: 100,
-                      ),
-                    ],
+          elevation: 4,
+          margin: const EdgeInsets.all(8),
+          child: Padding(
+            padding: const EdgeInsets.all(8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Expanded(
+                  child: ListTile(
+                    onTap: () => handleTapActivity(activity),
+                    title: Text(
+                      activity.titre,
+                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          activity.lieu,
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                        Text(
+                          "${activity.prix}€",
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              Row(
-                children: <Widget>[
-                  IconButton(
-                    icon: const Icon(Icons.edit),
-                    onPressed: () {},
+                const SizedBox(width: 10),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: SizedBox(
+                    height: 80,
+                    width: 80,
+                    child: Image.network(
+                      activity.image,
+                      fit: BoxFit.cover,
+                    ),
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.delete),
-                    onPressed: () => widget.handleDeleteActivity(activity.id),
-                  ),
-                ],
-              )
-            ],
+                ),
+                const SizedBox(width: 10), 
+                IconButton(
+                  icon: const Icon(Icons.edit),
+                  onPressed: () => handleEditActivity(activity),
+                  color: Colors.blue, 
+                ),
+                IconButton(
+                  icon: const Icon(Icons.delete),
+                  onPressed: () => widget.handleDeleteActivity(activity.id),
+                  color: Colors.red, 
+                ),
+              ],
+            ),
           ),
         );
       },

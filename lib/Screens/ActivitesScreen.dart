@@ -4,9 +4,10 @@ import 'package:squadgather/Services/FirestoreService.dart';
 import 'package:squadgather/utils/ActivitiesList.dart';
 
 class ActivitesScreen extends StatefulWidget {
-  const ActivitesScreen({super.key, required this.title});
+  const ActivitesScreen({super.key, required this.title, this.category = ""});
 
   final String title;
+  final String category;
 
   @override
   State<ActivitesScreen> createState() => _ActivitesScreenState();
@@ -18,7 +19,7 @@ class _ActivitesScreenState extends State<ActivitesScreen> {
   List<Activity> activitiesList = [];
 
   void getActivities() {
-    _firestoreService.getActivities().then((value) => {
+    _firestoreService.getActivities(categorie: widget.category).then((value) => {
           setState(() {
             activitiesList = value;
           })

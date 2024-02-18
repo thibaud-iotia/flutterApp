@@ -39,6 +39,8 @@ dependencies:
   firebase_database: ^10.4.0
   cloud_firestore: ^4.14.0
   image_input: ^0.0.2
+  cloudinary_flutter: ^1.0.0
+  cloudinary_url_gen: ^1.0.0
 
 dev_dependencies:
   flutter_test:
