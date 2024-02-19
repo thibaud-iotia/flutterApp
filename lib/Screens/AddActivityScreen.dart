@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:squadgather/Models/Activity.dart';
 import 'package:squadgather/Screens/HomeScreen.dart';
 import 'package:squadgather/Services/FirestoreService.dart';
 import 'package:squadgather/utils/InputWidget.dart';
 import 'package:image_input/image_input.dart';
+import 'package:http/http.dart' as http;
 
 class AddActivityScreen extends StatefulWidget {
   const AddActivityScreen({super.key, required this.title});
@@ -64,7 +67,11 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
       bool activityAdded = await _firestoreService.addActivity(newActivity);
       if (context.mounted) {
         if (activityAdded) {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeScreen(title: "SquadGather")));
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      const HomeScreen(title: "SquadGather")));
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('${newActivity.titre} a bien été ajouté !'),
@@ -78,6 +85,25 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
           );
         }
       }
+    }
+  }
+
+  Future<void> handleAddImage(XFile image, int index) async {
+    print(image.path);
+    final url = Uri.parse('https://api.cloudinary.com/v1_1/dvitd89f9/upload');
+
+    final request = http.MultipartRequest('POST', url)
+      ..fields['upload_preset'] = 'zieahaqu'
+      ..files.add(await http.MultipartFile.fromPath('file', image.path));
+    final response = await request.send();
+    if (response.statusCode == 200) {
+      final responseData = await response.stream.toBytes();
+      final responseString = String.fromCharCodes(responseData);
+      final jasonMap = jsonDecode(responseString);
+      setState(() {
+        final url = jasonMap['url'];
+        print(url);
+      });
     }
   }
 
@@ -111,13 +137,8 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
                   ImageInput(
                     allowEdit: true,
                     allowMaxImage: 5,
-                    onImageSelected: (image, index) {
-                      //save image to cloud and get the url
-                      //or
-                      //save image to local storage and get the path
-                      String? tempPath = image.path;
-                      print(tempPath);
-                    },
+                    onImageSelected: (image, index) =>
+                        handleAddImage(image, index),
                   ),
                   InputWidget(
                       labelText: "Catégorie",
