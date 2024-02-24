@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:squadgather/Models/Activity.dart';
 import 'package:squadgather/Screens/HomeScreen.dart';
@@ -7,6 +5,8 @@ import 'package:squadgather/Services/FirestoreService.dart';
 import 'package:squadgather/utils/InputWidget.dart';
 import 'package:image_input/image_input.dart';
 import 'package:http/http.dart' as http;
+import 'package:permission_handler/permission_handler.dart';
+import 'dart:convert';
 
 class AddActivityScreen extends StatefulWidget {
   const AddActivityScreen({super.key, required this.title});
@@ -88,8 +88,20 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
     }
   }
 
+  @override
+  void initState() {
+    super.initState();
+    requestPermission();
+  }
+
+  Future<void> requestPermission() async {
+    var status = await Permission.photos.status;
+    if (status.isDenied) {
+      await Permission.photos.request();
+    }
+  }
+
   Future<void> handleAddImage(XFile image, int index) async {
-    print(image.path);
     final url = Uri.parse('https://api.cloudinary.com/v1_1/dvitd89f9/upload');
 
     final request = http.MultipartRequest('POST', url)
@@ -102,7 +114,7 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
       final jasonMap = jsonDecode(responseString);
       setState(() {
         final url = jasonMap['url'];
-        print(url);
+        newActivity.image = url;
       });
     }
   }
@@ -114,60 +126,74 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
-      body: Form(
+      body: SingleChildScrollView(
+        child: Form(
           key: _formKey,
           child: Center(
             child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  InputWidget(
-                      labelText: "Titre",
-                      icon: Icons.local_activity,
-                      obscureText: false,
-                      onChanged: handleTitreChanged,
-                      type: TextInputType.text),
-                  const Padding(padding: EdgeInsets.only(top: 10, bottom: 10)),
-                  InputWidget(
-                      labelText: "Lieu",
-                      icon: Icons.place,
-                      obscureText: false,
-                      onChanged: handleLieuChanged,
-                      type: TextInputType.text),
-                  const Padding(padding: EdgeInsets.only(top: 10, bottom: 10)),
-                  ImageInput(
-                    allowEdit: true,
-                    allowMaxImage: 5,
-                    onImageSelected: (image, index) =>
-                        handleAddImage(image, index),
-                  ),
-                  InputWidget(
-                      labelText: "Catégorie",
-                      icon: Icons.category,
-                      obscureText: false,
-                      onChanged: handleCategorieChanged,
-                      type: TextInputType.text),
-                  const Padding(padding: EdgeInsets.only(top: 10, bottom: 10)),
-                  InputWidget(
-                      labelText: "Nombre de participants",
-                      icon: Icons.person,
-                      obscureText: false,
-                      onChanged: handleNbParticipantsChanged,
-                      type: TextInputType.number),
-                  const Padding(padding: EdgeInsets.only(top: 10, bottom: 10)),
-                  InputWidget(
-                      labelText: "Prix",
-                      icon: Icons.price_change,
-                      obscureText: false,
-                      onChanged: handlePrixChanged,
-                      type: TextInputType.number),
-                  const Padding(padding: EdgeInsets.only(top: 10)),
-                  //button
-                  ElevatedButton(
-                    onPressed: () => onSubscribePressed(),
-                    child: const Text("Ajouter"),
-                  ),
-                ]),
-          )),
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                const Padding(padding: EdgeInsets.only(top: 10)),
+                InputWidget(
+                  labelText: "Titre",
+                  icon: Icons.local_activity,
+                  obscureText: false,
+                  onChanged: handleTitreChanged,
+                  type: TextInputType.text,
+                ),
+                const Padding(padding: EdgeInsets.only(top: 10, bottom: 10)),
+                InputWidget(
+                  labelText: "Lieu",
+                  icon: Icons.place,
+                  obscureText: false,
+                  onChanged: handleLieuChanged,
+                  type: TextInputType.text,
+                ),
+                const Padding(padding: EdgeInsets.only(top: 10, bottom: 10)),
+                ImageInput(
+                  allowEdit: true,
+                  allowMaxImage: 5,
+                  onImageSelected: (image, index) =>
+                      handleAddImage(image, index),
+                ),
+                newActivity.image != ""
+                    ? Image.network(newActivity.image)
+                    : const Text(""),
+                InputWidget(
+                  labelText: "Catégorie",
+                  icon: Icons.category,
+                  obscureText: false,
+                  onChanged: handleCategorieChanged,
+                  type: TextInputType.text,
+                ),
+                const Padding(padding: EdgeInsets.only(top: 10, bottom: 10)),
+                InputWidget(
+                  labelText: "Nombre de participants",
+                  icon: Icons.person,
+                  obscureText: false,
+                  onChanged: handleNbParticipantsChanged,
+                  type: TextInputType.number,
+                ),
+                const Padding(padding: EdgeInsets.only(top: 10, bottom: 10)),
+                InputWidget(
+                  labelText: "Prix",
+                  icon: Icons.price_change,
+                  obscureText: false,
+                  onChanged: handlePrixChanged,
+                  type: TextInputType.number,
+                ),
+                const Padding(padding: EdgeInsets.only(top: 10)),
+                //button
+                ElevatedButton(
+                  onPressed: () => onSubscribePressed(),
+                  child: const Text("Ajouter"),
+                ),
+                const Padding(padding: EdgeInsets.only(top: 30)),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

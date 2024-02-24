@@ -16,7 +16,6 @@ class PanierScreen extends StatefulWidget {
 class _PanierScreenState extends State<PanierScreen> {
   FirestoreService firestoreService = FirestoreService();
 
-  // 1. récupération de la liste d'activité en fonction de la liste d'id présent dans le panier
   List<Activity> activites = [];
   int total = 0;
 
@@ -43,23 +42,30 @@ class _PanierScreenState extends State<PanierScreen> {
     firestoreService.getActivitiesFromCart(category: widget.category).then((value) => {
       setState(() {
         activites = value;
-        // calcul du total
         updateTotal();
       })
     });
   }
 
-
-  // 2. affichage de la liste d'activité
   @override
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        Expanded(child: 
-          PanierList(panierList: activites, deleteActivityFromCart: deleteActivityFromCart),
+        Expanded(
+          child: PanierList(
+            panierList: activites,
+            deleteActivityFromCart: deleteActivityFromCart,
+          ),
         ),
-        Text("Total : $total €")
-      ]
+        Text(
+          "Total : $total €",
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.blue, // Vous pouvez modifier la couleur selon votre préférence
+          ),
+        )
+      ],
     );
   }
 }
