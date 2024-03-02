@@ -46,7 +46,6 @@ class _HomeScreenState extends State<HomeScreen> {
     switch (index) {
       case 0:
         setState(() {
-          //_currentScreen = const ActivitesScreen(title: "Activités");
           _currentScreen = const TabBarTool(screenName: "activites");
           showOptions = true;
           optionName = "Ajouter";
@@ -68,7 +67,6 @@ class _HomeScreenState extends State<HomeScreen> {
         break;
       default:
         setState(() {
-          //_currentScreen = const ActivitesScreen(title: "Activités");
           _currentScreen = const TabBarTool(screenName: "activites");
           showOptions = false;
           optionName = "Terminer";

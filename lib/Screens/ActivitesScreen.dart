@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:squadgather/Models/Activity.dart';
 import 'package:squadgather/Services/FirestoreService.dart';
 import 'package:squadgather/utils/ActivitiesList.dart';
+import 'package:squadgather/utils/DialogBox.dart';
 
 class ActivitesScreen extends StatefulWidget {
   const ActivitesScreen({super.key, required this.title, this.category = ""});
@@ -19,11 +20,13 @@ class _ActivitesScreenState extends State<ActivitesScreen> {
   List<Activity> activitiesList = [];
 
   void getActivities() {
-    _firestoreService.getActivities(categorie: widget.category).then((value) => {
-          setState(() {
-            activitiesList = value;
-          })
-        });
+    _firestoreService
+        .getActivities(categorie: widget.category)
+        .then((value) => {
+              setState(() {
+                activitiesList = value;
+              })
+            });
   }
 
   @override
@@ -33,17 +36,19 @@ class _ActivitesScreenState extends State<ActivitesScreen> {
   }
 
   void handleDeleteActivity(int activityId) async {
-    bool activityDeleted = await _firestoreService.removeActivity(activityId);
-    if (context.mounted) {
-      if (activityDeleted) {
-        getActivities();
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("L'Activité a bien été supprimé !"),
-          ),
-        );
+    await DialogBox.show(context, () async {
+      bool activityDeleted = await _firestoreService.removeActivity(activityId);
+      if (context.mounted) {
+        if (activityDeleted) {
+          getActivities();
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("L'Activité a bien été supprimé !"),
+            ),
+          );
+        }
       }
-    }
+    });
   }
 
   @override

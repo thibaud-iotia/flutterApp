@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:squadgather/Models/Activity.dart';
 import 'package:squadgather/Services/FirestoreService.dart';
+import 'package:squadgather/utils/DialogBox.dart';
 import 'package:squadgather/utils/PanierList.dart';
 
 class PanierScreen extends StatefulWidget {
@@ -20,11 +21,15 @@ class _PanierScreenState extends State<PanierScreen> {
   int total = 0;
 
   void deleteActivityFromCart(int id) {
-    firestoreService.removeActivityFromCart(id);
-    setState(() {
-      activites.removeWhere((element) => element.id == id);
+    DialogBox.show(context, () async {
+      bool isDeleted = await firestoreService.removeActivityFromCart(id);
+      if (isDeleted) {
+        setState(() {
+          activites.removeWhere((element) => element.id == id);
+        });
+        updateTotal();
+      }
     });
-    updateTotal();
   }
 
   void updateTotal() {
@@ -59,10 +64,10 @@ class _PanierScreenState extends State<PanierScreen> {
         ),
         Text(
           "Total : $total €",
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: Colors.blue, // Vous pouvez modifier la couleur selon votre préférence
+            color: Colors.blue, 
           ),
         )
       ],

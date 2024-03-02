@@ -39,7 +39,7 @@ class _TabBarToolState extends State<TabBarTool> {
       });
     }
     return Theme(
-      data: Theme.of(context), // Use the theme from the ancestor MaterialApp
+      data: Theme.of(context),
       child: DefaultTabController(
         length: tabList.length,
         child: Scaffold(
@@ -53,6 +53,7 @@ class _TabBarToolState extends State<TabBarTool> {
                 Tab(icon: Icon(Icons.hiking_rounded)),
                 Tab(icon: Icon(Icons.local_activity)),
                 Tab(icon: Icon(Icons.nightlife)),
+                Tab(icon: Icon(Icons.all_inclusive)),
               ],
             ),
           ),

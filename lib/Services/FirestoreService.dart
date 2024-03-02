@@ -45,6 +45,7 @@ class FirestoreService {
   }
 
   List<String> getCategorie() {
+    categorie.sort((a, b) => a == "Autre" ? 1 : -1);
     return categorie;
   }
 

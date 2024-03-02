@@ -2,21 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:squadgather/Screens/LoginScreen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-import 'package:cloudinary_flutter/cloudinary_context.dart';
 import 'package:cloudinary_url_gen/cloudinary.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  CloudinaryContext.cloudinary = 
-    Cloudinary.fromCloudName(cloudName: "dvitd89f9");
-  runApp(const MyApp());
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform, name: "SquadGather");
+  Cloudinary cloudinary = Cloudinary.fromCloudName(cloudName: "dvitd89f9");
+  runApp(MyApp(cloudinary: cloudinary));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final Cloudinary cloudinary;
 
-  // This widget is the root of your application.
+  const MyApp({super.key, required this.cloudinary});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -26,6 +26,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: const LoginScreen(title: 'SquadGather'),
+      builder: EasyLoading.init(),
     );
   }
 }
