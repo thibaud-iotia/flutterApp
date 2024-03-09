@@ -3,6 +3,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:squadgather/Models/Activity.dart';
 import 'package:squadgather/Screens/HomeScreen.dart';
 import 'package:squadgather/Services/FirestoreService.dart';
+import 'package:squadgather/utils/AutoCompleteInput.dart';
 import 'package:squadgather/utils/DropDownList.dart';
 import 'package:squadgather/utils/InputWidget.dart';
 import 'package:image_input/image_input.dart';
@@ -18,6 +19,7 @@ class AddActivityScreen extends StatefulWidget {
   @override
   State<AddActivityScreen> createState() => _AddActivityScreenState();
 }
+const int imageUploadTimeout = 10000;
 
 class _AddActivityScreenState extends State<AddActivityScreen> {
   final _formKey = GlobalKey<FormState>();
@@ -113,28 +115,53 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
     }
   }
 
-  Future<void> handleAddImage(XFile image, int index) async {
+  void handleAddImage(XFile image, int index) async {
     EasyLoading.show(status: 'Chargement...');
-    final url = Uri.parse('https://api.cloudinary.com/v1_1/dvitd89f9/upload');
 
-    final request = http.MultipartRequest('POST', url)
-      ..fields['upload_preset'] = 'zieahaqu'
-      ..files.add(await http.MultipartFile.fromPath('file', image.path));
-    final response = await request.send();
-    if (response.statusCode == 200) {
-      final responseData = await response.stream.toBytes();
-      final responseString = String.fromCharCodes(responseData);
-      final jasonMap = jsonDecode(responseString);
-      final url = jasonMap['url'];
-      if (mounted) {
-        // Check if the widget is still mounted before calling setState
-        setState(() {
-          newActivity.image = url;
-          isImageSelected = true;
-        });
+    final Future<void> uploadFuture = Future(() async {
+      final url = Uri.parse('https://api.cloudinary.com/v1_1/dvitd89f9/upload');
+
+      final request = http.MultipartRequest('POST', url)
+        ..fields['upload_preset'] = 'zieahaqu'
+        ..files.add(await http.MultipartFile.fromPath('file', image.path));
+      final response = await request.send();
+      if (response.statusCode == 200) {
+        final responseData = await response.stream.toBytes();
+        final responseString = String.fromCharCodes(responseData);
+        final jasonMap = jsonDecode(responseString);
+        final url = jasonMap['url'];
+        if (mounted) {
+          setState(() {
+            newActivity.image = url;
+            isImageSelected = true;
+          });
+        }
+      }
+      EasyLoading.dismiss();
+    });
+
+    uploadFuture.timeout(const Duration(milliseconds: imageUploadTimeout), onTimeout: () {
+      EasyLoading.dismiss();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("La fonction de chargement de l'image a pris trop de temps."),
+        ),
+      );
+    });
+    //try-catch pour capturer les éventuelles exceptions
+    try {
+      await uploadFuture;
+    } catch (e) {
+      EasyLoading.dismiss();
+      debugPrint(e.toString());
+      if(context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Une erreur s'est produite lors du chargement de l'image. L'ajout d'image n'est pas possible sur navigateur."),
+          ),
+        );
       }
     }
-    EasyLoading.dismiss();
   }
 
   @override
@@ -165,13 +192,13 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
                     type: TextInputType.text,
                   ),
                   const Padding(padding: EdgeInsets.only(top: 10, bottom: 10)),
-                  InputWidget(
+                  /*InputWidget(
                     labelText: "Lieu",
                     icon: Icons.place,
                     obscureText: false,
                     onChanged: handleLieuChanged,
                     type: TextInputType.text,
-                  ),
+                  )*/AutoCompleteInput(label: "Lieu", onSelected: handleLieuChanged, icon: Icons.place),
                   const Padding(padding: EdgeInsets.only(top: 10, bottom: 10)),
                   ImageInput(
                     allowEdit: true,

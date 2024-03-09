@@ -23,19 +23,32 @@ class _HomeScreenState extends State<HomeScreen> {
   bool showOptions = false;
   String optionName = "Terminer";
   @override
-  void initState(){
+  void initState() {
     super.initState();
     handleNavigation(0);
   }
 
-  void handleOptions() {
-    if (optionName == "Terminer"){
-      _firestoreService.updateUser(_firestoreService.getCurrentUser());
-      //close the keyboard
-      FocusScope.of(context).unfocus();
-      
-    }else {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => const AddActivityScreen(title: "SquadGather")));
+  void handleOptions() async {
+    if (optionName == "Terminer") {
+      bool isUpdated = await _firestoreService
+          .updateUser(_firestoreService.getCurrentUser());
+      if (context.mounted) {
+        if (isUpdated) {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text("Mise à jour effectuée avec succès")));
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("Echec de la mise à jour")));
+        }
+        //close the keyboard
+        FocusScope.of(context).unfocus();
+      }
+    } else {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  const AddActivityScreen(title: "SquadGather")));
     }
   }
 
@@ -79,12 +92,21 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-          title: showOptions ? Row(children: <Widget>[
-            Expanded(child: Align(alignment: Alignment.center, child: Text(widget.title))),
-            ElevatedButton(onPressed: () => handleOptions(), child: Text(optionName))
-          ]) : Text(widget.title),
+          title: showOptions
+              ? Row(children: <Widget>[
+                  Expanded(
+                      child: Align(
+                          alignment: Alignment.center,
+                          child: Text(widget.title))),
+                  ElevatedButton(
+                      onPressed: () => handleOptions(), child: Text(optionName))
+                ])
+              : Text(widget.title),
         ),
         body: _currentScreen,
-        bottomNavigationBar: BottomNavBar(handleNavigation: handleNavigation, currentIndex: _currentIndex,));
+        bottomNavigationBar: BottomNavBar(
+          handleNavigation: handleNavigation,
+          currentIndex: _currentIndex,
+        ));
   }
 }

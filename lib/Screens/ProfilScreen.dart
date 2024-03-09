@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:squadgather/Models/User.dart';
 import 'package:squadgather/Screens/LoginScreen.dart';
 import 'package:squadgather/Services/FirestoreService.dart';
+import 'package:squadgather/utils/AutoCompleteInput.dart';
 import 'package:squadgather/utils/InputWidget.dart';
 
 class ProfilScreen extends StatefulWidget {
@@ -117,13 +118,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
                     currentValue: currentUser.birthday,
                     type: TextInputType.datetime),
                 const Padding(padding: EdgeInsets.only(top: 10)),
-                InputWidget(
-                    labelText: "Adresse",
-                    icon: Icons.map,
-                    obscureText: false,
-                    onChanged: onAdresseChanged,
-                    currentValue: currentUser.adress,
-                    type: TextInputType.text),
+                AutoCompleteInput(label: "Adresse", onSelected: onAdresseChanged, icon: Icons.map, initialValue: currentUser.adress),
                 const Padding(padding: EdgeInsets.only(top: 10)),
                 InputWidget(
                     labelText: "Code Postal",
