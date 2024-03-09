@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:squadgather/Models/User.dart';
 import 'package:squadgather/Services/FirestoreService.dart';
+import 'package:squadgather/utils/AutoCompleteInput.dart';
 import 'package:squadgather/utils/InputWidget.dart';
 
 class SubscribeScreen extends StatefulWidget {
@@ -111,23 +112,24 @@ class _SubscribeScreenState extends State<SubscribeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-          title: Text(widget.title),
-        ),
-        body: Form(
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: Text(widget.title),
+      ),
+      body: SingleChildScrollView(
+        child: Form(
           key: _formKey,
           child: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
+                const Padding(padding: EdgeInsets.only(top: 10)),
                 InputWidget(
                     labelText: "Login",
                     icon: Icons.person,
                     obscureText: false,
                     onChanged: onLoginChanged,
                     type: TextInputType.text),
-                //padding top and bottom
                 const Padding(padding: EdgeInsets.only(top: 10, bottom: 10)),
                 InputWidget(
                     labelText: "Password",
@@ -143,12 +145,7 @@ class _SubscribeScreenState extends State<SubscribeScreen> {
                     onChanged: onConfirmPasswordChanged,
                     type: TextInputType.text),
                 const Padding(padding: EdgeInsets.only(top: 10, bottom: 10)),
-                InputWidget(
-                    labelText: "Adresse",
-                    icon: Icons.map,
-                    obscureText: false,
-                    onChanged: onAdresseChanged,
-                    type: TextInputType.text),
+                AutoCompleteInput(label: "Adresse", onSelected: onAdresseChanged, icon: Icons.map),
                 const Padding(padding: EdgeInsets.only(top: 10, bottom: 10)),
                 InputWidget(
                     labelText: "Date de naissance",
@@ -170,9 +167,7 @@ class _SubscribeScreenState extends State<SubscribeScreen> {
                     obscureText: false,
                     onChanged: onCodePostalChanged,
                     type: TextInputType.number),
-                //padding top
                 const Padding(padding: EdgeInsets.only(top: 10)),
-                //button
                 ElevatedButton(
                   onPressed: () => onSubscribePressed(),
                   child: const Text("S'inscrire"),
@@ -180,6 +175,8 @@ class _SubscribeScreenState extends State<SubscribeScreen> {
               ],
             ),
           ),
-        ));
+        ),
+      ),
+    );
   }
 }

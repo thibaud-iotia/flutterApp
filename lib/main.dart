@@ -7,7 +7,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform, name: "SquadGather");
   Cloudinary cloudinary = Cloudinary.fromCloudName(cloudName: "dvitd89f9");
   runApp(MyApp(cloudinary: cloudinary));
 }
