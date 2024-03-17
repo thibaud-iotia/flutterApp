@@ -64,7 +64,7 @@ class _PanierListState extends State<PanierList> {
                   ),
                 ),
                 IconButton(
-                  icon: Icon(Icons.close),
+                  icon: const Icon(Icons.close),
                   onPressed: () => widget.deleteActivityFromCart(activity.id),
                 ),
               ],

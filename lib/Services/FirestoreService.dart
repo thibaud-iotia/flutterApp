@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:squadgather/Models/Activity.dart';
 import 'package:squadgather/Models/User.dart';
 
@@ -68,11 +69,11 @@ class FirestoreService {
             return false;
           }
         } else {
-          print("Login does not exist");
+          debugPrint("Login does not exist");
           return false;
         }
       } catch (e) {
-        print("Error: $e");
+        debugPrint("Error: $e");
         // Gérer l'erreur ici, par exemple, renvoyer un message d'erreur à l'interface utilisateur.
         return false;
       }
@@ -94,7 +95,7 @@ class FirestoreService {
       });
       return true;
     } catch (e) {
-      print("signUp: $e");
+      debugPrint("signUp: $e");
       return false;
     }
   }
@@ -112,7 +113,7 @@ class FirestoreService {
       });
       id++;
     } catch (e) {
-      print("getNextUserId: $e");
+      debugPrint("getNextUserId: $e");
     }
     return id;
   }
@@ -134,7 +135,7 @@ class FirestoreService {
         }
       });
     } catch (e) {
-      print("getActivities: $e");
+      debugPrint("getActivities: $e");
     }
 
     return activities;
@@ -150,11 +151,12 @@ class FirestoreService {
         }
       });
     } catch (e) {
-      print("getCategories: $e");
+      debugPrint("getCategories: $e");
     }
   }
 
-  Future<void> addActivityToCart(int activityId) async {
+  Future<bool> addActivityToCart(int activityId) async {
+    bool isAdded = false;
     try {
       // Get the current user's ID
       String userId = getUserId().toString();
@@ -163,9 +165,11 @@ class FirestoreService {
       await _cartsCollectionReference.doc("activities").update({
         userId: FieldValue.arrayUnion([activityId]),
       });
+      isAdded = true;
     } catch (e) {
-      print("addActivityToCart: $e");
+      debugPrint("addActivityToCart: $e");
     }
+    return isAdded;
   }
 
   Future<List<Activity>> getActivitiesFromCart({String? category}) async {
@@ -194,7 +198,7 @@ class FirestoreService {
         });
       }
     } catch (e) {
-      print("getActivitiesFromCart: $e");
+      debugPrint("getActivitiesFromCart: $e");
     }
     return activities;
   }
@@ -209,7 +213,7 @@ class FirestoreService {
       });
       return true;
     } catch (e) {
-      print("removeActivityFromCart: $e");
+      debugPrint("removeActivityFromCart: $e");
       return false;
     }
   }
@@ -226,7 +230,7 @@ class FirestoreService {
       });
       return true;
     } catch (e) {
-      print("updateUser: $e");
+      debugPrint("updateUser: $e");
       return false;
     }
   }
@@ -244,7 +248,7 @@ class FirestoreService {
       });
       return true;
     } catch (e) {
-      print("Add activity: $e");
+      debugPrint("Add activity: $e");
       return false;
     }
   }
@@ -263,7 +267,7 @@ class FirestoreService {
       });
       id++;
     } catch (e) {
-      print("getNextUserId: $e");
+      debugPrint("getNextUserId: $e");
     }
     return id;
   }
@@ -288,7 +292,7 @@ class FirestoreService {
       return false;
     } catch (e) {
       // Gérer les erreurs éventuelles
-      print("removeActivity: $e");
+      debugPrint("removeActivity: $e");
       return false;
     }
   }
@@ -319,7 +323,7 @@ class FirestoreService {
       // Si aucun document ne correspond à l'ID donné, retourner false
       return false;
     } catch (e) {
-      print("updateActivity: $e");
+      debugPrint("updateActivity: $e");
       return false;
     }
   }

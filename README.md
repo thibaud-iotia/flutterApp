@@ -13,6 +13,13 @@ Un système de filtres a été mis en place pour afficher les activités. En eff
 
 Une Bottom Bar permet la navigation entre différents écrans qui sont : La liste d'activité, Le panier utilisateur et enfin Le profile de l'utilisateur. 
 
+## Installation 
+Après avoir récupéré le projet git. Ouvrez un terminal à la racine du projet et lancez la commande : ```flutter pub get```. Cela va vous permettre de récupérer toutes les dépendances du projet afin que vous puissiez executer le projet en local via la commande : ```flutter run```.    
+Cependant, je vous conseille d'utiliser VS code avec l'extention Flutter pour plus de facilité d'utilisation.  
+L'appliction fonctionne aussi bien sur nativateur qu'émulateur Android. Cependant, si vous voulez utiliser un émulateur IOS il faudra modifier dans le ```Main.dart``` du projet cette ligne : ```await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);``` par ```await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform, name: "SquadGather");```
+
+Le login / mot de passe par défaut est : miage/miage
+
 ## Les User story :
 Un cahier des charges a été délivré afin d'exprimer les fonctionnalitées primordiales au projet. 
 D'autres fonctionnalités ont été ajoutés par mes soins afin d'aller plus loin. 
@@ -41,7 +48,8 @@ Voici la presentation des User story demandées :
 ![Ecran liste d'activité](./docImages/profil.PNG)
 
 #### US#6 : Filtrer sur la liste des activités
--  L'utilisateur a la possibilité de filtrer la liste d'activité par catégorie. 
+-  L'utilisateur a la possibilité de filtrer la liste d'activité par catégorie.
+
 ![Ecran liste d'activité](./docImages/activites.PNG)
 #### US#7 : Laisser libre cours à votre imagination
 -  La page d'inscription a été mise en place permettant d'ajouter plusieurs utilisateurs

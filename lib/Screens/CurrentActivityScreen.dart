@@ -27,16 +27,33 @@ class _CurrentActivityScreenState extends State<CurrentActivityScreen> {
       if (isUpdated) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Activité ${widget.activity.titre} mise à jour !')),
+            SnackBar(
+                content:
+                    Text('Activité ${widget.activity.titre} mise à jour !')),
           );
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const HomeScreen(title: "SquadGather")),
+            MaterialPageRoute(
+                builder: (context) => const HomeScreen(title: "SquadGather")),
           );
         }
       }
     } else {
-      _firestoreService.addActivityToCart(widget.activity.id);
+      bool isAdded = await _firestoreService.addActivityToCart(widget.activity.id);
+      if (isAdded) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content:
+                    Text('Activité ${widget.activity.titre} a été ajouté au panier !')),
+          );
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const HomeScreen(title: "SquadGather")),
+          );
+        }
+      }
     }
   }
 
@@ -87,7 +104,8 @@ class _CurrentActivityScreenState extends State<CurrentActivityScreen> {
                 type: TextInputType.text,
               )
             else
-              Text("Catégorie: ${widget.activity.categorie}", style: const TextStyle(fontSize: 18)),
+              Text("Catégorie: ${widget.activity.categorie}",
+                  style: const TextStyle(fontSize: 18)),
             const SizedBox(height: 10),
             if (widget.isEditing)
               InputWidget(
@@ -100,7 +118,8 @@ class _CurrentActivityScreenState extends State<CurrentActivityScreen> {
                 type: TextInputType.number,
               )
             else
-              Text("Prix : ${widget.activity.prix}€", style: const TextStyle(fontSize: 18)),
+              Text("Prix : ${widget.activity.prix}€",
+                  style: const TextStyle(fontSize: 18)),
             const SizedBox(height: 10),
             if (widget.isEditing)
               InputWidget(
@@ -113,7 +132,8 @@ class _CurrentActivityScreenState extends State<CurrentActivityScreen> {
                 type: TextInputType.text,
               )
             else
-              Text("Lieu: ${widget.activity.lieu}", style: const TextStyle(fontSize: 18)),
+              Text("Lieu: ${widget.activity.lieu}",
+                  style: const TextStyle(fontSize: 18)),
             const SizedBox(height: 10),
             if (widget.isEditing)
               InputWidget(
@@ -126,7 +146,8 @@ class _CurrentActivityScreenState extends State<CurrentActivityScreen> {
                 type: TextInputType.number,
               )
             else
-              Text("Nombre maximum de participants: ${widget.activity.nbParticipants}",
+              Text(
+                  "Nombre maximum de participants: ${widget.activity.nbParticipants}",
                   style: const TextStyle(fontSize: 18)),
             const SizedBox(height: 20),
             Image.network(
@@ -138,7 +159,8 @@ class _CurrentActivityScreenState extends State<CurrentActivityScreen> {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () => handleAddActivityToCart(),
-              child: Text(widget.isEditing ? "Enregistrer" : "Ajouter au panier"),
+              child:
+                  Text(widget.isEditing ? "Enregistrer" : "Ajouter au panier"),
             ),
           ],
         ),

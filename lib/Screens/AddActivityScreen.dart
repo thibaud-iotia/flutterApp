@@ -68,14 +68,15 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
 
   void onSubscribePressed() async {
     if (_formKey.currentState!.validate()) {
-      if (!isImageSelected) {
+      // condition désactivée pour les tests
+      /*if (!isImageSelected) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Veuillez sélectionner une image'),
           ),
         );
         return;
-      }
+      }*/
       int activityId = await _firestoreService.getNextActivityId();
       newActivity.id = activityId;
       bool activityAdded = await _firestoreService.addActivity(newActivity);
