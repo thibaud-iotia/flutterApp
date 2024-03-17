@@ -77,6 +77,11 @@ class _SubscribeScreenState extends State<SubscribeScreen> {
           if (context.mounted) {
             if (logged) {
               Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Subscribe sucessfull, you can now log in'),
+                ),
+              );
             } else {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
@@ -145,7 +150,10 @@ class _SubscribeScreenState extends State<SubscribeScreen> {
                     onChanged: onConfirmPasswordChanged,
                     type: TextInputType.text),
                 const Padding(padding: EdgeInsets.only(top: 10, bottom: 10)),
-                AutoCompleteInput(label: "Adresse", onSelected: onAdresseChanged, icon: Icons.map),
+                AutoCompleteInput(
+                    label: "Adresse",
+                    onSelected: onAdresseChanged,
+                    icon: Icons.map),
                 const Padding(padding: EdgeInsets.only(top: 10, bottom: 10)),
                 InputWidget(
                     labelText: "Date de naissance",
